@@ -1,0 +1,7 @@
+Delete flight
+Where flight_num = 200 or flight_num = 421;
+Delete airport
+Where airport_code = 'KCL';
+Delete city
+Where city_code = 180;
+Commit;

@@ -1,0 +1,10 @@
+set pagesize 52
+set linesize 100
+set echo on
+cd "C:\Users\Michael Franklin\Documents\College Portfolio\ACC Semester 4\Database Programming\Project\Extra Credit"
+spool "Michael Franklin Project Extra Credit.txt"
+-- Michael Franklin
+-- ITSE 2309-007
+-- Project Extra Credit
+@ "Project Extra Credit Scripts.txt"
+spool off

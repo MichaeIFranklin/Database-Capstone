@@ -1,0 +1,513 @@
+SQL> -- Michael Franklin
+SQL> -- ITSE 2309-007
+SQL> -- Project Part 3
+SQL> @ "C:\Users\Jason Swann\Documents\Classwork\1 ITSE2309 Oracle\Michael database\Project_Part_3_Scripts.txt"
+SQL> Clear Breaks
+SQL> Clear Columns
+SQL> Clear Computes
+SQL> TTitle off
+SQL> -- Queries:
+SQL> -- Q1
+SQL> Select aircraft_serial, aircraft_type, description, capacity, range, capacity - 150 "Seating Over 150"
+  2  From aircraft
+  3  Join aircraft_type Using (aircraft_type)
+  4  Where capacity >= 150 And range > 2400;
+
+AIRCRAFT AIRCR DESCRIPTION                 CAPACITY      RANGE Seating Over 150                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+-------- ----- ------------------------- ---------- ---------- ----------------                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+T100-004 DC9   6-Seat, prop w/jet               168       2800               18                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+T100-007 BO737 6-Seat, 2-engine jet             174       2500               24                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+T200-002 BO747 10-Seat, 4-engine jet            300       3500              150                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+T200-004 DC9   6-Seat, prop w/jet               168       2800               18                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+T300-005 BO737 6-Seat, 2-engine jet             174       2500               24                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+
+SQL> 
+SQL> -- Q4
+SQL> Create View date1 As
+  2  Select unique flight_date, aircraft.aircraft_serial, aircraft.aircraft_type, description, capacity, range
+  3  From sched_flight, aircraft, aircraft_type
+  4  Where aircraft.aircraft_serial Not In(
+  5  Select aircraft_serial
+  6  From sched_flight
+  7  Where flight_date = '12-JUL-2000'
+  8  ) And aircraft.aircraft_type = aircraft_type.aircraft_type And flight_date = '12-JUL-2000'
+  9  Order By flight_date, aircraft_serial;
+
+View created.
+
+SQL> 
+SQL> Create View date2 As
+  2  Select unique flight_date, aircraft.aircraft_serial, aircraft.aircraft_type, description, capacity, range
+  3  From sched_flight, aircraft, aircraft_type
+  4  Where aircraft.aircraft_serial Not In(
+  5  Select aircraft_serial
+  6  From sched_flight
+  7  Where flight_date = '13-JUL-2000'
+  8  ) And aircraft.aircraft_type = aircraft_type.aircraft_type And flight_date = '13-JUL-2000'
+  9  Order By flight_date, aircraft_serial;
+
+View created.
+
+SQL> 
+SQL> Create View date3 As
+  2  Select unique flight_date, aircraft.aircraft_serial, aircraft.aircraft_type, description, capacity, range
+  3  From sched_flight, aircraft, aircraft_type
+  4  Where aircraft.aircraft_serial Not In(
+  5  Select aircraft_serial
+  6  From sched_flight
+  7  Where flight_date = '14-JUL-2000'
+  8  ) And aircraft.aircraft_type = aircraft_type.aircraft_type And flight_date = '14-JUL-2000'
+  9  Order By flight_date, aircraft_serial;
+
+View created.
+
+SQL> 
+SQL> Select * From date1
+  2  Union
+  3  Select * From date2
+  4  Union
+  5  Select * From date3;
+
+FLIGHT_DA AIRCRAFT AIRCR DESCRIPTION                 CAPACITY      RANGE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+--------- -------- ----- ------------------------- ---------- ----------                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+12-JUL-00 T100-004 DC9   6-Seat, prop w/jet               168       2800                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+12-JUL-00 T100-007 BO737 6-Seat, 2-engine jet             174       2500                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+12-JUL-00 T200-002 BO747 10-Seat, 4-engine jet            300       3500                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+12-JUL-00 T200-004 DC9   6-Seat, prop w/jet               168       2800                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+12-JUL-00 T300-005 BO737 6-Seat, 2-engine jet             174       2500                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+12-JUL-00 T300-009 BO727 5-Seat, 2-engine jet             110       1800                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+13-JUL-00 T100-004 DC9   6-Seat, prop w/jet               168       2800                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+13-JUL-00 T200-004 DC9   6-Seat, prop w/jet               168       2800                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+13-JUL-00 T300-009 BO727 5-Seat, 2-engine jet             110       1800                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+14-JUL-00 T100-001 BO727 5-Seat, 2-engine jet             110       1800                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+14-JUL-00 T100-004 DC9   6-Seat, prop w/jet               168       2800                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+14-JUL-00 T100-007 BO737 6-Seat, 2-engine jet             174       2500                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+14-JUL-00 T200-004 DC9   6-Seat, prop w/jet               168       2800                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+14-JUL-00 T300-005 BO737 6-Seat, 2-engine jet             174       2500                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+
+14 rows selected.
+
+SQL> 
+SQL> Drop View date1;
+
+View dropped.
+
+SQL> Drop View date2;
+
+View dropped.
+
+SQL> Drop View date3;
+
+View dropped.
+
+SQL> 
+SQL> -- Q5
+SQL> select flight_num, flight_date, customer_num,
+  2  Air2.airport_name "DEPARTURE AIRPORT", City2.city_name "DEPARTURE CITY", tod,
+  3  Air1.airport_name "ARRIVAL AIRPORT", City1.city_name "ARRIVAL CITY", toa
+  4  From booking
+  5  Join sched_flight Using (flight_num, flight_date)
+  6  Join flight Using (flight_num)
+  7  Join airport Air1 On flight.ariv_air_code = Air1.airport_code
+  8  Join city City1 On Air1.city_code = City1.city_code
+  9  Join airport Air2 On flight.dprt_air_code = Air2.airport_code
+ 10  Join city City2 On Air2.city_code = City2.city_code;
+
+FLI FLIGHT_DA CUST DEPARTURE AIRPORT              DEPARTURE CITY  TOD  ARRIVAL AIRPORT                ARRIVAL CITY    TOA                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+--- --------- ---- ------------------------------ --------------- ---- ------------------------------ --------------- ----                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+110 12-JUL-00 1004 Memphis Internat. Airport      Memphis         0935 Austin Municpl. Airport        Austin          0800                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+110 12-JUL-00 1077 Memphis Internat. Airport      Memphis         0935 Austin Municpl. Airport        Austin          0800                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+110 12-JUL-00 1158 Memphis Internat. Airport      Memphis         0935 Austin Municpl. Airport        Austin          0800                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+181 13-JUL-00 1001 Chicago Internat. Airport      Chicago         1130 Houston Internat. Airport      Houston         0830                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+333 13-JUL-00 1080 Houston Internat. Airport      Houston         2000 Chicago Internat. Airport      Chicago         1700                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+359 13-JUL-00 1055 Austin Municpl. Airport        Austin          2215 Houston Internat. Airport      Houston         2130                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+359 13-JUL-00 1155 Austin Municpl. Airport        Austin          2215 Houston Internat. Airport      Houston         2130                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+359 14-JUL-00 1100 Austin Municpl. Airport        Austin          2215 Houston Internat. Airport      Houston         2130                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+899 13-JUL-00 1158 Austin Municpl. Airport        Austin          1545 Memphis Internat. Airport      Memphis         1400                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+899 14-JUL-00 1004 Austin Municpl. Airport        Austin          1545 Memphis Internat. Airport      Memphis         1400                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+899 14-JUL-00 1058 Austin Municpl. Airport        Austin          1545 Memphis Internat. Airport      Memphis         1400                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+950 13-JUL-00 1058 Memphis Internat. Airport      Memphis         1500 Chicago Internat. Airport      Chicago         1300                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+
+12 rows selected.
+
+SQL> 
+SQL> -- Reports:
+SQL> -- R1:
+SQL> @ "C:\Users\Jason Swann\Documents\Classwork\1 ITSE2309 Oracle\Michael database\Project_Part_3_Report_1_Script.txt"
+SQL> -- Clear old table data
+SQL> Drop View report1;
+
+View dropped.
+
+SQL> -- Establish page format
+SQL> Set Pagesize 52
+SQL> Set linesize 100
+SQL> Set Long 1100
+SQL> Set Echo on
+SQL> Clear Breaks
+SQL> Clear Columns
+SQL> Clear Computes
+SQL> TTitle off
+SQL> -- Create the report1 View
+SQL> -- Usimg aircraft and type tables
+SQL> Create View report1(serial, type, description, capacity, range) As
+  2  Select aircraft_serial, aircraft_type, description, capacity, range
+  3  From aircraft
+  4  Join aircraft_type Using (aircraft_type);
+
+View created.
+
+SQL> -- Select the current View data
+SQL> Select * from report1;
+
+SERIAL   TYPE  DESCRIPTION                 CAPACITY      RANGE                                      
+-------- ----- ------------------------- ---------- ----------                                      
+T100-001 BO727 5-Seat, 2-engine jet             110       1800                                      
+T300-009 BO727 5-Seat, 2-engine jet             110       1800                                      
+T300-005 BO737 6-Seat, 2-engine jet             174       2500                                      
+T100-007 BO737 6-Seat, 2-engine jet             174       2500                                      
+T200-002 BO747 10-Seat, 4-engine jet            300       3500                                      
+T100-004 DC9   6-Seat, prop w/jet               168       2800                                      
+T200-004 DC9   6-Seat, prop w/jet               168       2800                                      
+
+7 rows selected.
+
+SQL> -- Generate the Report based on the View above
+SQL> TTitle 'Terra Firma Airlines | Aircraft Report'
+SQL> Column serial Heading 'Serial#' Format A21
+SQL> Column type Heading 'Type' Format A8
+SQL> Column description Heading 'Description' Format A21
+SQL> Column capacity Heading 'Capacity' Format 99999999
+SQL> Column range Heading 'Range' Format 99999
+SQL> Break on Report Skip 1
+SQL> Compute Count Label 'Number of Aircraft:' -
+> 	  Sum Label 'Total Capacity:' -
+> 	  Avg Label 'Average Capacity:' -
+> 	  of Capacity on Report
+SQL> /
+
+Fri Nov 20                                                                                 page    1
+                                       Terra Firma Airlines 
+                                           Aircraft Report
+
+Serial#               Type     Description            Capacity  Range                               
+--------------------- -------- --------------------- --------- ------                               
+T100-001              BO727    5-Seat, 2-engine jet        110   1800                               
+T300-009              BO727    5-Seat, 2-engine jet        110   1800                               
+T300-005              BO737    6-Seat, 2-engine jet        174   2500                               
+T100-007              BO737    6-Seat, 2-engine jet        174   2500                               
+T200-002              BO747    10-Seat, 4-engine jet       300   3500                               
+T100-004              DC9      6-Seat, prop w/jet          168   2800                               
+T200-004              DC9      6-Seat, prop w/jet          168   2800                               
+                                                     ---------                                      
+Average Capacity:                                          172                                      
+Number of Aircraft:                                          7                                      
+Total Capacity:                                           1204                                      
+                                                                                                    
+
+7 rows selected.
+
+SQL> 
+SQL> -- R4:
+SQL> @ "C:\Users\Jason Swann\Documents\Classwork\1 ITSE2309 Oracle\Michael database\Project_Part_3_Report_4_Script.txt"
+SQL> -- Clear old table data
+SQL> Drop View report4;
+
+View dropped.
+
+SQL> -- Establish page format
+SQL> Set Pagesize 52
+SQL> Set linesize 100
+SQL> Set Long 1100
+SQL> Set Echo on
+SQL> Clear Breaks
+SQL> Clear Columns
+SQL> Clear Computes
+SQL> TTitle off
+SQL> -- Create the report4 View
+SQL> -- Usimg aircraft and type tables
+SQL> Create View report4(fl_date, fl_num, serial, resv, avail) As
+  2  Select Extract(month From flight_date)||'/'||Extract(day From flight_date), flight_num, sched_flight.aircraft_serial, Count(customer_num), capacity - Count(customer_num)
+  3  From sched_flight
+  4  Join booking Using (flight_num, flight_date)
+  5  Join aircraft On sched_flight.aircraft_serial = aircraft.aircraft_serial
+  6  Join aircraft_type Using (aircraft_type)
+  7  Group By flight_date, flight_num, sched_flight.aircraft_serial, capacity
+  8  Order By flight_date, flight_num;
+
+View created.
+
+SQL> -- Select the current View data
+SQL> Select * from report4;
+
+FL_DATE                                                                           FL_ SERIAL        
+--------------------------------------------------------------------------------- --- --------      
+      RESV      AVAIL                                                                               
+---------- ----------                                                                               
+7/12                                                                              110 T100-001      
+         3        107                                                                               
+                                                                                                    
+7/13                                                                              181 T200-002      
+         1        299                                                                               
+                                                                                                    
+7/13                                                                              333 T200-002      
+         1        299                                                                               
+                                                                                                    
+7/13                                                                              359 T300-005      
+         2        172                                                                               
+                                                                                                    
+7/13                                                                              899 T100-001      
+         1        109                                                                               
+                                                                                                    
+7/13                                                                              950 T100-007      
+         1        173                                                                               
+                                                                                                    
+7/14                                                                              359 T200-002      
+         1        299                                                                               
+                                                                                                    
+7/14                                                                              899 T300-009      
+         2        108                                                                               
+                                                                                                    
+
+8 rows selected.
+
+SQL> -- Generate the Report based on the View above
+SQL> TTitle 'Terra Firma Airlines | Scheduled Flight Summary'
+SQL> Column fl_date Heading 'Flt|Date' Format A22
+SQL> Column fl_num Heading 'Flt|Nbr' Format A3
+SQL> Column serial Heading 'Aircraft|Serial #' Format A8
+SQL> Column resv Heading '# Seats|Reserved' Format 99999999
+SQL> Column avail Heading '# Seats|Avail.' Format 9999999
+SQL> Break on Report on fl_date Skip 1
+SQL> Compute Count Label 'Total Flights:' of fl_num on fl_date
+SQL> Compute Sum Label 'Seats Reserved:' of resv on fl_date
+SQL> Compute Count Label 'Grand Total Flights:' of fl_num on Report
+SQL> Compute Sum Label 'Total Seats Reserved:' of resv on Report
+SQL> /
+
+Fri Nov 20                                                                                 page    1
+                                       Terra Firma Airlines 
+                                      Scheduled Flight Summary
+
+Flt                    Flt Aircraft   # Seats  # Seats                                              
+Date                   Nbr Serial #  Reserved   Avail.                                              
+---------------------- --- -------- --------- --------                                              
+7/12                   110 T100-001         3      107                                              
+********************** ---          ---------                                                       
+Total Flights:           1                                                                          
+Seats Reserved:                             3                                                       
+                                                                                                    
+7/13                   181 T200-002         1      299                                              
+                       333 T200-002         1      299                                              
+                       359 T300-005         2      172                                              
+                       899 T100-001         1      109                                              
+                       950 T100-007         1      173                                              
+********************** ---          ---------                                                       
+Total Flights:           5                                                                          
+Seats Reserved:                             6                                                       
+                                                                                                    
+7/14                   359 T200-002         1      299                                              
+                       899 T300-009         2      108                                              
+********************** ---          ---------                                                       
+Total Flights:           2                                                                          
+Seats Reserved:                             3                                                       
+                                                                                                    
+                       ---          ---------                                                       
+Grand Total Flights:     8                                                                          
+Total Seats Reserved:                      12                                                       
+
+8 rows selected.
+
+SQL> 
+SQL> -- R6:
+SQL> @ "C:\Users\Jason Swann\Documents\Classwork\1 ITSE2309 Oracle\Michael database\Project_Part_3_Report_6_Script.txt"
+SQL> -- Clear old table data
+SQL> Drop View report6;
+
+View dropped.
+
+SQL> -- Establish page format
+SQL> Set Pagesize 52
+SQL> Set linesize 100
+SQL> Set Long 1100
+SQL> Set Echo on
+SQL> Clear Breaks
+SQL> Clear Columns
+SQL> Clear Computes
+SQL> TTitle off
+SQL> -- Create the report6 View
+SQL> -- Usimg aircraft and type tables
+SQL> Create View report6(fl_num, fl_date, cust_num) As
+  2  Select flight_num, Extract(month From flight_date)||'/'||Extract(day From flight_date)||'/'||Extract(year From flight_date), customer_num
+  3  From booking;
+
+View created.
+
+SQL> -- Select the current View data
+SQL> Select * from report6;
+
+FL_                                                                                                 
+---                                                                                                 
+FL_DATE                                                                                             
+----------------------------------------------------------------------------------------------------
+CUST                                                                                                
+----                                                                                                
+110                                                                                                 
+7/12/2000                                                                                           
+1004                                                                                                
+                                                                                                    
+110                                                                                                 
+7/12/2000                                                                                           
+1077                                                                                                
+                                                                                                    
+110                                                                                                 
+7/12/2000                                                                                           
+1158                                                                                                
+                                                                                                    
+181                                                                                                 
+7/13/2000                                                                                           
+1001                                                                                                
+                                                                                                    
+333                                                                                                 
+7/13/2000                                                                                           
+1080                                                                                                
+                                                                                                    
+359                                                                                                 
+7/13/2000                                                                                           
+1055                                                                                                
+                                                                                                    
+359                                                                                                 
+7/13/2000                                                                                           
+1155                                                                                                
+                                                                                                    
+359                                                                                                 
+7/14/2000                                                                                           
+1100                                                                                                
+                                                                                                    
+899                                                                                                 
+7/13/2000                                                                                           
+1158                                                                                                
+                                                                                                    
+899                                                                                                 
+7/14/2000                                                                                           
+1004                                                                                                
+                                                                                                    
+899                                                                                                 
+7/14/2000                                                                                           
+1058                                                                                                
+                                                                                                    
+950                                                                                                 
+
+FL_                                                                                                 
+---                                                                                                 
+FL_DATE                                                                                             
+----------------------------------------------------------------------------------------------------
+CUST                                                                                                
+----                                                                                                
+7/13/2000                                                                                           
+1058                                                                                                
+                                                                                                    
+
+12 rows selected.
+
+SQL> -- Generate the Report based on the View above
+SQL> TTitle 'Terra Firma Airlines | Flight Reservation Summary'
+SQL> Column fl_num Heading 'Flight|Nbr' Format A5
+SQL> Column fl_date Heading 'Flight|Date' Format A9
+SQL> Column cust_num Heading 'Cust|Nbr' Format A4
+SQL> Break on fl_date on fl_num on Report
+SQL> /
+
+Fri Nov 20                                                                                 page    1
+                                       Terra Firma Airlines 
+                                     Flight Reservation Summary
+
+Fligh Flight    Cust                                                                                
+Nbr   Date      Nbr                                                                                 
+----- --------- ----                                                                                
+110   7/12/2000 1004                                                                                
+                1077                                                                                
+                1158                                                                                
+181   7/13/2000 1001                                                                                
+333             1080                                                                                
+359             1055                                                                                
+                1155                                                                                
+359   7/14/2000 1100                                                                                
+899   7/13/2000 1158                                                                                
+899   7/14/2000 1004                                                                                
+                1058                                                                                
+950   7/13/2000 1058                                                                                
+
+12 rows selected.
+
+SQL> 
+SQL> Clear Breaks
+SQL> Clear Columns
+SQL> Clear Computes
+SQL> TTitle off
+SQL> -- Modifications:
+SQL> -- M1:
+SQL> Insert Into city
+  2  Values (180, 'Kansas City', 'MO');
+
+1 row created.
+
+SQL> Insert Into airport
+  2  Values ('KCL', 'Kansas City Internat. Airport', 180);
+
+1 row created.
+
+SQL> Insert Into flight
+  2  Values (200, 'MEM', 'KCL');
+
+1 row created.
+
+SQL> Insert Into flight
+  2  Values (421, 'KCL', 'MEM');
+
+1 row created.
+
+SQL> Select * From city;
+
+CIT CITY_NAME       ST                                                                              
+--- --------------- --                                                                              
+180 Kansas City     MO                                                                              
+25  Austin          TX                                                                              
+52  Houston         TX                                                                              
+380 Memphis         TN                                                                              
+520 Chicago         IL                                                                              
+
+SQL> 
+SQL> Select * From airport;
+
+AIR AIRPORT_NAME                   CIT                                                              
+--- ------------------------------ ---                                                              
+KCL Kansas City Internat. Airport  180                                                              
+AUS Austin Municpl. Airport        25                                                               
+HOU Houston Internat. Airport      52                                                               
+MEM Memphis Internat. Airport      380                                                              
+ORD Chicago Internat. Airport      520                                                              
+
+SQL> 
+SQL> Select * From flight;
+
+FLI ARI DPR                                                                                         
+--- --- ---                                                                                         
+200 MEM KCL                                                                                         
+421 KCL MEM                                                                                         
+110 AUS MEM                                                                                         
+181 HOU ORD                                                                                         
+285 AUS HOU                                                                                         
+333 ORD HOU                                                                                         
+359 HOU AUS                                                                                         
+887 MEM ORD                                                                                         
+899 MEM AUS                                                                                         
+950 ORD MEM                                                                                         
+
+10 rows selected.
+
+SQL> Commit;
+
+Commit complete.
+
+SQL> spool off

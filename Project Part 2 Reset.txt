@@ -1,0 +1,8 @@
+Drop Table booking;
+Drop Table sched_flight;
+Drop Table flight;
+Drop Table aircraft;
+Drop Table airport;
+Drop Table aircraft_type;
+Drop Table customer;
+Drop Table city;

@@ -1,0 +1,10 @@
+set pagesize 52
+set linesize 1000
+set echo on
+cd "C:\Users\Michael Franklin\Documents\College Portfolio\ACC Semester 4\Database Programming\Project\Part 3"
+spool "Michael Franklin Project Part 3 (Queries, Reports, and Manipulation).txt"
+-- Michael Franklin
+-- ITSE 2309-007
+-- Project Part 3
+@ "Project Part 3 Scripts.txt"
+spool off

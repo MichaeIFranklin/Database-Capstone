@@ -1,0 +1,10 @@
+set pagesize 52
+set linesize 100
+set echo on
+cd "C:\Users\Michael Franklin\Documents\College Portfolio\ACC Semester 4\Database Programming\Project\Part 2"
+spool "Michael Franklin Project Part 2 (Population).txt"
+-- Michael Franklin
+-- ITSE 2309-007
+-- Project Part 2
+@ "Project Part 2 Scripts.txt"
+spool off

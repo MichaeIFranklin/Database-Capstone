@@ -1,0 +1,94 @@
+Clear Breaks
+Clear Columns
+Clear Computes
+TTitle off
+-- Queries:
+-- Q1
+Select aircraft_serial, aircraft_type, description, capacity, range, capacity - 150 "Seating Over 150"
+From aircraft
+Join aircraft_type Using (aircraft_type)
+Where capacity >= 150 And range > 2400;
+
+-- Q4
+Create View date1 As
+Select unique flight_date, aircraft.aircraft_serial, aircraft.aircraft_type, description, capacity, range
+From sched_flight, aircraft, aircraft_type
+Where aircraft.aircraft_serial Not In(
+Select aircraft_serial
+From sched_flight
+Where flight_date = '12-JUL-2000'
+) And aircraft.aircraft_type = aircraft_type.aircraft_type And flight_date = '12-JUL-2000'
+Order By flight_date, aircraft_serial;
+
+Create View date2 As
+Select unique flight_date, aircraft.aircraft_serial, aircraft.aircraft_type, description, capacity, range
+From sched_flight, aircraft, aircraft_type
+Where aircraft.aircraft_serial Not In(
+Select aircraft_serial
+From sched_flight
+Where flight_date = '13-JUL-2000'
+) And aircraft.aircraft_type = aircraft_type.aircraft_type And flight_date = '13-JUL-2000'
+Order By flight_date, aircraft_serial;
+  
+Create View date3 As
+Select unique flight_date, aircraft.aircraft_serial, aircraft.aircraft_type, description, capacity, range
+From sched_flight, aircraft, aircraft_type
+Where aircraft.aircraft_serial Not In(
+Select aircraft_serial
+From sched_flight
+Where flight_date = '14-JUL-2000'
+) And aircraft.aircraft_type = aircraft_type.aircraft_type And flight_date = '14-JUL-2000'
+Order By flight_date, aircraft_serial;
+
+Select * From date1
+Union
+Select * From date2
+Union
+Select * From date3;
+
+Drop View date1;
+Drop View date2;
+Drop View date3;
+
+-- Q5
+select flight_num, flight_date, customer_num, 
+Air2.airport_name "DEPARTURE AIRPORT", City2.city_name "DEPARTURE CITY", tod,
+Air1.airport_name "ARRIVAL AIRPORT", City1.city_name "ARRIVAL CITY", toa
+From booking
+Join sched_flight Using (flight_num, flight_date)
+Join flight Using (flight_num)
+Join airport Air1 On flight.ariv_air_code = Air1.airport_code
+Join city City1 On Air1.city_code = City1.city_code
+Join airport Air2 On flight.dprt_air_code = Air2.airport_code
+Join city City2 On Air2.city_code = City2.city_code;
+
+-- Reports:
+-- R1:
+@"Project Part 3 Report 1 Script"
+
+-- R4:
+@"Project Part 3 Report 4 Script"
+
+-- R6:
+@"Project Part 3 Report 6 Script"
+
+Clear Breaks
+Clear Columns
+Clear Computes
+TTitle off
+-- Modifications:
+-- M1:
+Insert Into city
+Values (180, 'Kansas City', 'MO');
+Insert Into airport
+Values ('KCL', 'Kansas City Internat. Airport', 180);
+Insert Into flight
+Values (200, 'MEM', 'KCL');
+Insert Into flight
+Values (421, 'KCL', 'MEM');
+Select * From city;
+
+Select * From airport;
+
+Select * From flight;
+Commit;

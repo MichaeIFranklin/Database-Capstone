@@ -1,0 +1,50 @@
+Clear Breaks
+Clear Columns
+Clear Computes
+TTitle off
+-- Queries:
+-- add test records
+Insert Into sched_flight
+Values (181, '12-JUL-2000', 'T200-002', '1000', '0100');
+Insert Into sched_flight
+Values (285, '12-JUL-2000', 'T300-005', '1100', '1145');
+Insert Into sched_flight
+Values (887, '12-JUL-2000', 'T100-007', '0800', '1000');
+Insert Into sched_flight
+Values (950, '12-JUL-2000', 'T100-007', '2000', '2200');
+commit;
+
+-- Q2
+Select flight_num, aircraft_serial, aircraft_type
+From sched_flight
+Join flight Using(flight_num)
+Join aircraft Using(aircraft_serial)
+Join aircraft_type Using(aircraft_type)
+Where flight_date = '12-JUL-00' And flight_num In('181','285','887','950')
+Order By flight_num, aircraft_serial;
+
+-- remove testing records
+Delete sched_flight
+Where flight_num in (181, 285, 887, 950) And flight_date = '12-JUL-2000';
+commit;
+
+-- Q3
+Create View seats As
+Select flight_num, flight_date, capacity - Count(customer_num) "Available Seats"
+From sched_flight
+Join booking Using(flight_num,flight_date)
+Join aircraft On sched_flight.aircraft_serial = aircraft.aircraft_serial
+Join aircraft_type Using (aircraft_type)
+Group By flight_num, flight_date, capacity
+Order By flight_num, flight_date;
+Select *
+From seats
+Where flight_date = '&flight_date';
+Drop View seats;
+
+-- Extra Credit 2
+-- delete if exists
+Drop Index booking_customer_num_idx;
+-- create index
+Create Index booking_customer_num_idx
+On booking(customer_num);

@@ -1,0 +1,214 @@
+-- Creates:
+Create Table city
+(city_code char(3) Constraint city_pk Primary Key,
+city_name varchar2(15) Not Null,
+state_cdoe char(2) Not Null
+);
+
+Create Table customer
+(customer_num char(4) Constraint customer_pk Primary Key,
+customer_name varchar2(15) Not Null
+);
+
+Create Table aircraft_type
+(aircraft_type varchar2(5) Constraint aircraft_type_pk Primary Key,
+description varchar2(25),
+capacity number(3) Not Null,
+range number(4) Not Null
+);
+
+Create Table airport
+(airport_code char(3) Constraint airport_pk Primary Key,
+airport_name varchar2(30) Not Null,
+city_code char(3) Not Null,
+Constraint airport_city_fk Foreign Key(city_code) References city(city_code)
+);
+
+Create Table aircraft
+(aircraft_serial char(8) Constraint aircraft_pk Primary Key,
+aircraft_type varchar2(5) Not Null,
+Constraint aircraft_aircraft_type_fk Foreign Key(aircraft_type) References aircraft_type(aircraft_type)
+);
+
+Create Table flight
+(flight_num char(3) Constraint flight_pk Primary Key,
+ariv_air_code char(3) Not Null,
+dprt_air_code char(3) Not Null,
+Constraint flight_airport_ariv_fk Foreign Key(ariv_air_code) References airport(airport_code),
+Constraint flight_airport_dprt_fk Foreign Key(dprt_air_code) References airport(airport_code)
+);
+
+Create Table sched_flight
+(flight_num char(3),
+flight_date date,
+aircraft_serial char(8) Not Null,
+toa char(4) Not Null Constraint sched_flight_toa_ck Check(toa Between 0000 And 2359),
+tod char(4) Not Null Constraint sched_flight_tod_ck Check(tod Between 0000 And 2359),
+Constraint sched_flight_pk Primary Key(flight_num, flight_date),
+Constraint sched_flight_flight_fk Foreign Key(flight_num) References flight(flight_num),
+Constraint sched_flight_aircraft_fk Foreign Key(aircraft_serial) References aircraft(aircraft_serial)
+);
+
+Create Table booking
+(flight_num char(3),
+flight_date date,
+customer_num char(4),
+Constraint booking_pk Primary Key(flight_num, flight_date, customer_num),
+Constraint booking_sched_flight_fk Foreign Key(flight_num, flight_date) References sched_flight(flight_num, flight_date),
+Constraint booking_customer_fk Foreign Key(customer_num) References customer(customer_num)
+);
+
+describe city;
+
+describe customer;
+
+describe aircraft_type;
+
+describe airport;
+
+describe aircraft;
+
+describe flight;
+
+describe sched_flight;
+
+describe booking;
+
+-- Data Entry:
+Insert Into city
+Values (025, 'Austin', 'TX');
+Insert Into city
+Values (052, 'Houston', 'TX');
+Insert Into city
+Values (380, 'Memphis', 'TN');
+Insert Into city
+Values (520, 'Chicago', 'IL');
+
+Insert Into customer
+Values (1001, 'Ford');
+Insert Into customer
+Values (1004, 'Pfeiffer');
+Insert Into customer
+Values (1055, 'Harris');
+Insert Into customer
+Values (1058, 'Codd');
+Insert Into customer
+Values (1077, 'Nelson');
+Insert Into customer
+Values (1080, 'Cassatt');
+Insert Into customer
+Values (1100, 'Streep');
+Insert Into customer
+Values (1155, 'Lechowick');
+Insert Into customer
+Values (1158, 'Hilbert');
+
+Insert Into aircraft_type
+Values ('BO727', '5-Seat, 2-engine jet', 110, 1800);
+Insert Into aircraft_type
+Values ('BO737', '6-Seat, 2-engine jet', 174, 2500);
+Insert Into aircraft_type
+Values ('BO747', '10-Seat, 4-engine jet', 300, 3500);
+Insert Into aircraft_type
+Values ('DC9', '6-Seat, prop w/jet', 168, 2800);
+
+Insert Into airport
+Values ('AUS', 'Austin Municpl. Airport', 025);
+Insert Into airport
+Values ('HOU', 'Houston Internat. Airport', 052);
+Insert Into airport
+Values ('MEM', 'Memphis Internat. Airport', 380);
+Insert Into airport
+Values ('ORD', 'Chicago Internat. Airport', 520);
+
+Insert Into aircraft
+Values ('T100-001', 'BO727');
+Insert Into aircraft
+Values ('T100-004', 'DC9');
+Insert Into aircraft
+Values ('T100-007', 'BO737');
+Insert Into aircraft
+Values ('T200-002', 'BO747');
+Insert Into aircraft
+Values ('T200-004', 'DC9');
+Insert Into aircraft
+Values ('T300-005', 'BO737');
+Insert Into aircraft
+Values ('T300-009', 'BO727');
+
+Insert Into flight
+Values (110, 'AUS', 'MEM');
+Insert Into flight
+Values (181, 'HOU', 'ORD');
+Insert Into flight
+Values (285, 'AUS', 'HOU');
+Insert Into flight
+Values (333, 'ORD', 'HOU');
+Insert Into flight
+Values (359, 'HOU', 'AUS');
+Insert Into flight
+Values (887, 'MEM', 'ORD');
+Insert Into flight
+Values (899, 'MEM', 'AUS');
+Insert Into flight
+Values (950, 'ORD', 'MEM');
+
+Insert Into sched_flight
+Values (110, '12-JUL-2000', 'T100-001', '0800', '0935');
+Insert Into sched_flight
+Values (181, '13-JUL-2000', 'T200-002', '0830', '1130');
+Insert Into sched_flight
+Values (333, '13-JUL-2000', 'T200-002', '1700', '2000');
+Insert Into sched_flight
+Values (359, '13-JUL-2000', 'T300-005', '2130', '2215');
+Insert Into sched_flight
+Values (359, '14-JUL-2000', 'T200-002', '2130', '2215');
+Insert Into sched_flight
+Values (899, '13-JUL-2000', 'T100-001', '1400', '1545');
+Insert Into sched_flight
+Values (899, '14-JUL-2000', 'T300-009', '1400', '1545');
+Insert Into sched_flight
+Values (950, '13-JUL-2000', 'T100-007', '1300', '1500');
+
+Insert Into booking
+Values (110, '12-JUL-2000', 1004);
+Insert Into booking
+Values (110, '12-JUL-2000', 1077);
+Insert Into booking
+Values (110, '12-JUL-2000', 1158);
+Insert Into booking
+Values (181, '13-JUL-2000', 1001);
+Insert Into booking
+Values (333, '13-JUL-2000', 1080);
+Insert Into booking
+Values (359, '13-JUL-2000', 1055);
+Insert Into booking
+Values (359, '13-JUL-2000', 1155);
+Insert Into booking
+Values (359, '14-JUL-2000', 1100);
+Insert Into booking
+Values (899, '13-JUL-2000', 1158);
+Insert Into booking
+Values (899, '14-JUL-2000', 1004);
+Insert Into booking
+Values (899, '14-JUL-2000', 1058);
+Insert Into booking
+Values (950, '13-JUL-2000', 1058);
+
+Select * From city;
+
+Select * From customer;
+
+Select * From aircraft_type;
+
+Select * From airport;
+
+Select * From aircraft;
+
+Select * From flight;
+
+Select * From sched_flight;
+
+Select * From booking;
+
+Commit;

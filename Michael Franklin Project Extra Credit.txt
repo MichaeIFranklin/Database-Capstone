@@ -1,0 +1,117 @@
+SQL> -- Michael Franklin
+SQL> -- ITSE 2309-007
+SQL> -- Project Extra Credit
+SQL> @ "Project Extra Credit Scripts.txt"
+SQL> Clear Breaks
+SQL> Clear Columns
+SQL> Clear Computes
+SQL> TTitle off
+SQL> -- Queries:
+SQL> -- add test records
+SQL> Insert Into sched_flight
+  2  Values (181, '12-JUL-2000', 'T200-002', '1000', '0100');
+
+1 row inserted.
+
+SQL> Insert Into sched_flight
+  2  Values (285, '12-JUL-2000', 'T300-005', '1100', '1145');
+
+1 row inserted.
+
+SQL> Insert Into sched_flight
+  2  Values (887, '12-JUL-2000', 'T100-007', '0800', '1000');
+
+1 row inserted.
+
+SQL> Insert Into sched_flight
+  2  Values (950, '12-JUL-2000', 'T100-007', '2000', '2200');
+
+1 row inserted.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> -- Q2
+SQL> Select flight_num, aircraft_serial, aircraft_type
+  2  From sched_flight
+  3  Join flight Using(flight_num)
+  4  Join aircraft Using(aircraft_serial)
+  5  Join aircraft_type Using(aircraft_type)
+  6  Where flight_date = '12-JUL-00' And flight_num In('181','285','887','950')
+  7  Order By flight_num, aircraft_serial;
+
+FLI AIRCRAFT AIRCR
+--- -------- -----
+181 T200-002 BO747
+285 T300-005 BO737
+887 T100-007 BO737
+950 T100-007 BO737
+
+SQL> 
+SQL> -- remove testing records
+SQL> Delete sched_flight
+  2  Where flight_num in (181, 285, 887, 950) And flight_date = '12-JUL-2000';
+
+4 rows deleted.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> 
+SQL> -- Q3
+SQL> Create View seats As
+  2  Select flight_num, flight_date, capacity - Count(customer_num) "Available Seats"
+  3  From sched_flight
+  4  Join booking Using(flight_num,flight_date)
+  5  Join aircraft On sched_flight.aircraft_serial = aircraft.aircraft_serial
+  6  Join aircraft_type Using (aircraft_type)
+  7  Group By flight_num, flight_date, capacity
+  8  Order By flight_num, flight_date;
+
+View SEATS created.
+
+SQL> Select *
+  2  From seats
+  3  Where flight_date = '&flight_date';
+old:Select *
+From seats
+Where flight_date = '&flight_date'
+new:Select *
+From seats
+Where flight_date = '13-JUL-2000'
+
+FLI FLIGHT_DA Available Seats
+--- --------- ---------------
+181 13-JUL-00             299
+333 13-JUL-00             299
+359 13-JUL-00             172
+899 13-JUL-00             109
+950 13-JUL-00             173
+
+SQL> Drop View seats;
+
+View SEATS dropped.
+
+SQL> 
+SQL> -- Extra Credit 2
+SQL> -- delete if exists
+SQL> Drop Index booking_customer_num_idx;
+
+Error starting at line : 47 File @ C:\Users\Michael Franklin\Documents\College Portfolio\ACC Semester 4\Database Programming\Project\Extra Credit\Project Extra Credit Scripts.txt
+In command -
+Drop Index booking_customer_num_idx
+Error report -
+ORA-01418: specified index does not exist
+01418. 00000 -  "specified index does not exist"
+*Cause:    
+*Action:
+SQL> -- create index
+SQL> Create Index booking_customer_num_idx
+  2  On booking(customer_num);
+
+Index BOOKING_CUSTOMER_NUM_IDX created.
+
+SQL> spool off

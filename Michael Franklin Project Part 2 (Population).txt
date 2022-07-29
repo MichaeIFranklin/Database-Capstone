@@ -1,0 +1,548 @@
+SQL> -- Michael Franklin
+SQL> -- ITSE 2309-007
+SQL> -- Project Part 2
+SQL> @ "Project Part 2 Scripts.txt"
+SQL> -- Creates:
+SQL> Create Table city
+  2  (city_code char(3) Constraint city_pk Primary Key,
+  3  city_name varchar2(15) Not Null,
+  4  state_cdoe char(2) Not Null
+  5  );
+
+Table CITY created.
+
+SQL> 
+SQL> Create Table customer
+  2  (customer_num char(4) Constraint customer_pk Primary Key,
+  3  customer_name varchar2(15) Not Null
+  4  );
+
+Table CUSTOMER created.
+
+SQL> 
+SQL> Create Table aircraft_type
+  2  (aircraft_type varchar2(5) Constraint aircraft_type_pk Primary Key,
+  3  description varchar2(25),
+  4  capacity number(3) Not Null,
+  5  range number(4) Not Null
+  6  );
+
+Table AIRCRAFT_TYPE created.
+
+SQL> 
+SQL> Create Table airport
+  2  (airport_code char(3) Constraint airport_pk Primary Key,
+  3  airport_name varchar2(30) Not Null,
+  4  city_code char(3) Not Null,
+  5  Constraint airport_city_fk Foreign Key(city_code) References city(city_code)
+  6  );
+
+Table AIRPORT created.
+
+SQL> 
+SQL> Create Table aircraft
+  2  (aircraft_serial char(8) Constraint aircraft_pk Primary Key,
+  3  aircraft_type varchar2(5) Not Null,
+  4  Constraint aircraft_aircraft_type_fk Foreign Key(aircraft_type) References aircraft_type(aircraft_type)
+  5  );
+
+Table AIRCRAFT created.
+
+SQL> 
+SQL> Create Table flight
+  2  (flight_num char(3) Constraint flight_pk Primary Key,
+  3  ariv_air_code char(3) Not Null,
+  4  dprt_air_code char(3) Not Null,
+  5  Constraint flight_airport_ariv_fk Foreign Key(ariv_air_code) References airport(airport_code),
+  6  Constraint flight_airport_dprt_fk Foreign Key(dprt_air_code) References airport(airport_code)
+  7  );
+
+Table FLIGHT created.
+
+SQL> 
+SQL> Create Table sched_flight
+  2  (flight_num char(3),
+  3  flight_date date,
+  4  aircraft_serial char(8) Not Null,
+  5  toa char(4) Not Null Constraint sched_flight_toa_ck Check(toa Between 0000 And 2359),
+  6  tod char(4) Not Null Constraint sched_flight_tod_ck Check(tod Between 0000 And 2359),
+  7  Constraint sched_flight_pk Primary Key(flight_num, flight_date),
+  8  Constraint sched_flight_flight_fk Foreign Key(flight_num) References flight(flight_num),
+  9  Constraint sched_flight_aircraft_fk Foreign Key(aircraft_serial) References aircraft(aircraft_serial)
+ 10  );
+
+Table SCHED_FLIGHT created.
+
+SQL> 
+SQL> Create Table booking
+  2  (flight_num char(3),
+  3  flight_date date,
+  4  customer_num char(4),
+  5  Constraint booking_pk Primary Key(flight_num, flight_date, customer_num),
+  6  Constraint booking_sched_flight_fk Foreign Key(flight_num, flight_date) References sched_flight(flight_num, flight_date),
+  7  Constraint booking_customer_fk Foreign Key(customer_num) References customer(customer_num)
+  8  );
+
+Table BOOKING created.
+
+SQL> 
+SQL> describe city;
+Name       Null?    Type         
+---------- -------- ------------ 
+CITY_CODE  NOT NULL CHAR(3)      
+CITY_NAME  NOT NULL VARCHAR2(15) 
+STATE_CDOE NOT NULL CHAR(2)      
+SQL> 
+SQL> describe customer;
+Name          Null?    Type         
+------------- -------- ------------ 
+CUSTOMER_NUM  NOT NULL CHAR(4)      
+CUSTOMER_NAME NOT NULL VARCHAR2(15) 
+SQL> 
+SQL> describe aircraft_type;
+Name          Null?    Type         
+------------- -------- ------------ 
+AIRCRAFT_TYPE NOT NULL VARCHAR2(5)  
+DESCRIPTION            VARCHAR2(25) 
+CAPACITY      NOT NULL NUMBER(3)    
+RANGE         NOT NULL NUMBER(4)    
+SQL> 
+SQL> describe airport;
+Name         Null?    Type         
+------------ -------- ------------ 
+AIRPORT_CODE NOT NULL CHAR(3)      
+AIRPORT_NAME NOT NULL VARCHAR2(30) 
+CITY_CODE    NOT NULL CHAR(3)      
+SQL> 
+SQL> describe aircraft;
+Name            Null?    Type        
+--------------- -------- ----------- 
+AIRCRAFT_SERIAL NOT NULL CHAR(8)     
+AIRCRAFT_TYPE   NOT NULL VARCHAR2(5) 
+SQL> 
+SQL> describe flight;
+Name          Null?    Type    
+------------- -------- ------- 
+FLIGHT_NUM    NOT NULL CHAR(3) 
+ARIV_AIR_CODE NOT NULL CHAR(3) 
+DPRT_AIR_CODE NOT NULL CHAR(3) 
+SQL> 
+SQL> describe sched_flight;
+Name            Null?    Type    
+--------------- -------- ------- 
+FLIGHT_NUM      NOT NULL CHAR(3) 
+FLIGHT_DATE     NOT NULL DATE    
+AIRCRAFT_SERIAL NOT NULL CHAR(8) 
+TOA             NOT NULL CHAR(4) 
+TOD             NOT NULL CHAR(4) 
+SQL> 
+SQL> describe booking;
+Name         Null?    Type    
+------------ -------- ------- 
+FLIGHT_NUM   NOT NULL CHAR(3) 
+FLIGHT_DATE  NOT NULL DATE    
+CUSTOMER_NUM NOT NULL CHAR(4) 
+SQL> 
+SQL> -- Data Entry:
+SQL> Insert Into city
+  2  Values (025, 'Austin', 'TX');
+
+1 row inserted.
+
+SQL> Insert Into city
+  2  Values (052, 'Houston', 'TX');
+
+1 row inserted.
+
+SQL> Insert Into city
+  2  Values (380, 'Memphis', 'TN');
+
+1 row inserted.
+
+SQL> Insert Into city
+  2  Values (520, 'Chicago', 'IL');
+
+1 row inserted.
+
+SQL> 
+SQL> Insert Into customer
+  2  Values (1001, 'Ford');
+
+1 row inserted.
+
+SQL> Insert Into customer
+  2  Values (1004, 'Pfeiffer');
+
+1 row inserted.
+
+SQL> Insert Into customer
+  2  Values (1055, 'Harris');
+
+1 row inserted.
+
+SQL> Insert Into customer
+  2  Values (1058, 'Codd');
+
+1 row inserted.
+
+SQL> Insert Into customer
+  2  Values (1077, 'Nelson');
+
+1 row inserted.
+
+SQL> Insert Into customer
+  2  Values (1080, 'Cassatt');
+
+1 row inserted.
+
+SQL> Insert Into customer
+  2  Values (1100, 'Streep');
+
+1 row inserted.
+
+SQL> Insert Into customer
+  2  Values (1155, 'Lechowick');
+
+1 row inserted.
+
+SQL> Insert Into customer
+  2  Values (1158, 'Hilbert');
+
+1 row inserted.
+
+SQL> 
+SQL> Insert Into aircraft_type
+  2  Values ('BO727', '5-Seat, 2-engine jet', 110, 1800);
+
+1 row inserted.
+
+SQL> Insert Into aircraft_type
+  2  Values ('BO737', '6-Seat, 2-engine jet', 174, 2500);
+
+1 row inserted.
+
+SQL> Insert Into aircraft_type
+  2  Values ('BO747', '10-Seat, 4-engine jet', 300, 3500);
+
+1 row inserted.
+
+SQL> Insert Into aircraft_type
+  2  Values ('DC9', '6-Seat, prop w/jet', 168, 2800);
+
+1 row inserted.
+
+SQL> 
+SQL> Insert Into airport
+  2  Values ('AUS', 'Austin Municpl. Airport', 025);
+
+1 row inserted.
+
+SQL> Insert Into airport
+  2  Values ('HOU', 'Houston Internat. Airport', 052);
+
+1 row inserted.
+
+SQL> Insert Into airport
+  2  Values ('MEM', 'Memphis Internat. Airport', 380);
+
+1 row inserted.
+
+SQL> Insert Into airport
+  2  Values ('ORD', 'Chicago Internat. Airport', 520);
+
+1 row inserted.
+
+SQL> 
+SQL> Insert Into aircraft
+  2  Values ('T100-001', 'BO727');
+
+1 row inserted.
+
+SQL> Insert Into aircraft
+  2  Values ('T100-004', 'DC9');
+
+1 row inserted.
+
+SQL> Insert Into aircraft
+  2  Values ('T100-007', 'BO737');
+
+1 row inserted.
+
+SQL> Insert Into aircraft
+  2  Values ('T200-002', 'BO747');
+
+1 row inserted.
+
+SQL> Insert Into aircraft
+  2  Values ('T200-004', 'DC9');
+
+1 row inserted.
+
+SQL> Insert Into aircraft
+  2  Values ('T300-005', 'BO737');
+
+1 row inserted.
+
+SQL> Insert Into aircraft
+  2  Values ('T300-009', 'BO727');
+
+1 row inserted.
+
+SQL> 
+SQL> Insert Into flight
+  2  Values (110, 'AUS', 'MEM');
+
+1 row inserted.
+
+SQL> Insert Into flight
+  2  Values (181, 'HOU', 'ORD');
+
+1 row inserted.
+
+SQL> Insert Into flight
+  2  Values (285, 'AUS', 'HOU');
+
+1 row inserted.
+
+SQL> Insert Into flight
+  2  Values (333, 'ORD', 'HOU');
+
+1 row inserted.
+
+SQL> Insert Into flight
+  2  Values (359, 'HOU', 'AUS');
+
+1 row inserted.
+
+SQL> Insert Into flight
+  2  Values (887, 'MEM', 'ORD');
+
+1 row inserted.
+
+SQL> Insert Into flight
+  2  Values (899, 'MEM', 'AUS');
+
+1 row inserted.
+
+SQL> Insert Into flight
+  2  Values (950, 'ORD', 'MEM');
+
+1 row inserted.
+
+SQL> 
+SQL> Insert Into sched_flight
+  2  Values (110, '12-JUL-2000', 'T100-001', '0800', '0935');
+
+1 row inserted.
+
+SQL> Insert Into sched_flight
+  2  Values (181, '13-JUL-2000', 'T200-002', '0830', '1130');
+
+1 row inserted.
+
+SQL> Insert Into sched_flight
+  2  Values (333, '13-JUL-2000', 'T200-002', '1700', '2000');
+
+1 row inserted.
+
+SQL> Insert Into sched_flight
+  2  Values (359, '13-JUL-2000', 'T300-005', '2130', '2215');
+
+1 row inserted.
+
+SQL> Insert Into sched_flight
+  2  Values (359, '14-JUL-2000', 'T200-002', '2130', '2215');
+
+1 row inserted.
+
+SQL> Insert Into sched_flight
+  2  Values (899, '13-JUL-2000', 'T100-001', '1400', '1545');
+
+1 row inserted.
+
+SQL> Insert Into sched_flight
+  2  Values (899, '14-JUL-2000', 'T300-009', '1400', '1545');
+
+1 row inserted.
+
+SQL> Insert Into sched_flight
+  2  Values (950, '13-JUL-2000', 'T100-007', '1300', '1500');
+
+1 row inserted.
+
+SQL> 
+SQL> Insert Into booking
+  2  Values (110, '12-JUL-2000', 1004);
+
+1 row inserted.
+
+SQL> Insert Into booking
+  2  Values (110, '12-JUL-2000', 1077);
+
+1 row inserted.
+
+SQL> Insert Into booking
+  2  Values (110, '12-JUL-2000', 1158);
+
+1 row inserted.
+
+SQL> Insert Into booking
+  2  Values (181, '13-JUL-2000', 1001);
+
+1 row inserted.
+
+SQL> Insert Into booking
+  2  Values (333, '13-JUL-2000', 1080);
+
+1 row inserted.
+
+SQL> Insert Into booking
+  2  Values (359, '13-JUL-2000', 1055);
+
+1 row inserted.
+
+SQL> Insert Into booking
+  2  Values (359, '13-JUL-2000', 1155);
+
+1 row inserted.
+
+SQL> Insert Into booking
+  2  Values (359, '14-JUL-2000', 1100);
+
+1 row inserted.
+
+SQL> Insert Into booking
+  2  Values (899, '13-JUL-2000', 1158);
+
+1 row inserted.
+
+SQL> Insert Into booking
+  2  Values (899, '14-JUL-2000', 1004);
+
+1 row inserted.
+
+SQL> Insert Into booking
+  2  Values (899, '14-JUL-2000', 1058);
+
+1 row inserted.
+
+SQL> Insert Into booking
+  2  Values (950, '13-JUL-2000', 1058);
+
+1 row inserted.
+
+SQL> 
+SQL> Select * From city;
+
+CIT CITY_NAME       ST
+--- --------------- --
+25  Austin          TX
+52  Houston         TX
+380 Memphis         TN
+520 Chicago         IL
+
+SQL> 
+SQL> Select * From customer;
+
+CUST CUSTOMER_NAME  
+---- ---------------
+1001 Ford           
+1004 Pfeiffer       
+1055 Harris         
+1058 Codd           
+1077 Nelson         
+1080 Cassatt        
+1100 Streep         
+1155 Lechowick      
+1158 Hilbert        
+
+9 rows selected. 
+
+SQL> 
+SQL> Select * From aircraft_type;
+
+AIRCR DESCRIPTION                 CAPACITY      RANGE
+----- ------------------------- ---------- ----------
+BO727 5-Seat, 2-engine jet             110       1800
+BO737 6-Seat, 2-engine jet             174       2500
+BO747 10-Seat, 4-engine jet            300       3500
+DC9   6-Seat, prop w/jet               168       2800
+
+SQL> 
+SQL> Select * From airport;
+
+AIR AIRPORT_NAME                   CIT
+--- ------------------------------ ---
+AUS Austin Municpl. Airport        25 
+HOU Houston Internat. Airport      52 
+MEM Memphis Internat. Airport      380
+ORD Chicago Internat. Airport      520
+
+SQL> 
+SQL> Select * From aircraft;
+
+AIRCRAFT AIRCR
+-------- -----
+T100-001 BO727
+T100-004 DC9  
+T100-007 BO737
+T200-002 BO747
+T200-004 DC9  
+T300-005 BO737
+T300-009 BO727
+
+7 rows selected. 
+
+SQL> 
+SQL> Select * From flight;
+
+FLI ARI DPR
+--- --- ---
+110 AUS MEM
+181 HOU ORD
+285 AUS HOU
+333 ORD HOU
+359 HOU AUS
+887 MEM ORD
+899 MEM AUS
+950 ORD MEM
+
+8 rows selected. 
+
+SQL> 
+SQL> Select * From sched_flight;
+
+FLI FLIGHT_DA AIRCRAFT TOA  TOD 
+--- --------- -------- ---- ----
+110 12-JUL-00 T100-001 0800 0935
+181 13-JUL-00 T200-002 0830 1130
+333 13-JUL-00 T200-002 1700 2000
+359 13-JUL-00 T300-005 2130 2215
+359 14-JUL-00 T200-002 2130 2215
+899 13-JUL-00 T100-001 1400 1545
+899 14-JUL-00 T300-009 1400 1545
+950 13-JUL-00 T100-007 1300 1500
+
+8 rows selected. 
+
+SQL> 
+SQL> Select * From booking;
+
+FLI FLIGHT_DA CUST
+--- --------- ----
+110 12-JUL-00 1004
+110 12-JUL-00 1077
+110 12-JUL-00 1158
+181 13-JUL-00 1001
+333 13-JUL-00 1080
+359 13-JUL-00 1055
+359 13-JUL-00 1155
+359 14-JUL-00 1100
+899 13-JUL-00 1158
+899 14-JUL-00 1004
+899 14-JUL-00 1058
+950 13-JUL-00 1058
+
+12 rows selected. 
+
+SQL> spool off
